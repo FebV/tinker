@@ -23,6 +23,7 @@ router.post('/', function(req, res) {
               && (p.type == 1 || p.type == 2);
   if(!legal)
     return res.stdShort(1);
+    
   var users = req.myObj.db.collection('users');
   users.count({username: p.username}, function(err, result) {
 
