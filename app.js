@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var multer = require('multer');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -18,12 +19,66 @@ app.set('view engine', 'jade');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+//middle ware
+var injectMongo = function(req, res, next) {
+  var MongoClient = require('mongodb').MongoClient;
+  var url = 'mongodb://localhost:27017/tinker';
+  MongoClient.connect(url, function(err, db) {
+    if(err != null)
+    {
+      res.send(JSON.stringify({code: -1, status: '数据库连接失败', data: null}));
+      return;
+    }
+    req.myObj = {};
+    req.myObj.db = db;
+    next();
+  });
+}
+
+var stdResponse = function(req, res, next) {
+  var error = {
+    '-2': '数据库查询失败',
+    '-1': '数据库连接失败',
+    '0': 'OK'
+  }
+  res.stdShort = function(code) {
+    var obj = {
+      code: code,
+      status: error[code],
+      data: null
+    }
+    res.send(JSON.stringify(obj));
+  }
+
+  res.std = function(code, status, data) {
+    var obj = {
+      code: code,
+      status: status,
+      data: data
+    }
+    res.send(JSON.stringify(obj));
+  }
+
+  res.stdData = function(data) {
+    var obj = {
+      code: 0,
+      status: 'OK',
+      data: data
+    }
+    res.send(JSON.stringify(obj));
+  }
+  next();
+}
+
+app.use(injectMongo);
+app.use(stdResponse);
+
+app.use('/api', routes);
+app.use('/api/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
