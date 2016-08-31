@@ -40,15 +40,17 @@ var injectMongo = function(req, res, next) {
 }
 
 var stdResponse = function(req, res, next) {
-  var error = {
+  var statusList = {
     '-2': '数据库查询失败',
     '-1': '数据库连接失败',
-    '0': 'OK'
+    '0': 'OK',
+    '1': '参数不合法',
+    '2': '用户名已经被注册'
   }
   res.stdShort = function(code) {
     var obj = {
       code: code,
-      status: error[code],
+      status: statusList[code],
       data: null
     }
     res.send(JSON.stringify(obj));
