@@ -6,7 +6,6 @@ var validator = require('validator');
 router.get('/', function(req, res, next) {
   var db = req.myObj.db;
   db.collection('users').find().toArray( (err, docs) => {
-    db.close();
     if(err == null)
       res.stdShort(0);
     else

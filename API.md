@@ -31,7 +31,8 @@ status = {
   '-1': '数据库连接失败',
   '0': 'OK',
   '1': '参数不合法',
-  '2': '用户名已经被注册'
+  '2': '用户名已经被注册',
+  '3': '用户名密码错误',
 }
 ```
 响应描述和响应码一一对应，当code不为0时可直接将响应描述显示在屏幕  
@@ -74,8 +75,29 @@ param:
   type (身份,必填,仅可填1|2，1代表学生，2代表维修工)
 result:   
 {
-  code: 0 | -1
-  result: 
-    JSON Array 所有用户记录
+  code: 0 | 1 | 2
+  result: JSON Array 
+    [所有用户记录]
+}
+```
+
+### 认证相关
+---
+
+#### 登陆认证
+获得身份认证token
+```
+url: auth  
+method: POST
+param:
+  username (用户名,必填)
+  password (密码,必填)
+result:   
+{
+  code: 0 | 1 | 3
+  result: JSON Object
+    {
+      token: 身份认证token
+    }
 }
 ```

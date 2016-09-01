@@ -8,6 +8,7 @@ var multer = require('multer');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var auth = require('./routes/auth');
 
 var app = express();
 
@@ -33,9 +34,10 @@ var injectMongo = function(req, res, next) {
       res.send(JSON.stringify({code: -1, status: '数据库连接失败', data: null}));
       return;
     }
-    req.myObj = {};
-    req.myObj.db = db;
+    req.db = {};
+    req.db.users = db.collection('users');
     next();
+    db.close();
   });
 }
 
@@ -45,7 +47,8 @@ var stdResponse = function(req, res, next) {
     '-1': '数据库连接失败',
     '0': 'OK',
     '1': '参数不合法',
-    '2': '用户名已经被注册'
+    '2': '用户名已经被注册',
+    '3': '用户名密码错误',
   }
   res.stdShort = function(code) {
     var obj = {
@@ -81,6 +84,7 @@ app.use(stdResponse);
 
 app.use('/api', routes);
 app.use('/api/users', users);
+app.use('/api/auth', auth);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
