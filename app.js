@@ -9,6 +9,7 @@ var multer = require('multer');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
+var jobs = require('./routes/jobs');
 
 var app = express();
 
@@ -36,19 +37,37 @@ var injectMongo = function(req, res, next) {
     }
     req.db = {};
     req.db.users = db.collection('users');
+    req.db.jobs = db.collection('jobs');
     next();
-    db.close();
+    req.db.db = db;
   });
-}
+};
+
+var checkAuth = function(req, res, next) {
+  var token = req.query.token ? req.query.token : req.body.token;
+  if(!token)
+    return res.stdShort(1);
+  req.db.users.find({token: token}).toArray(function(err, docs) {
+    if(err)
+      return res.stdShort(-2);
+    if(docs.length < 1)
+      return res.stdShort(4);
+    // console.log(docs[0]._id)
+    req.userId = docs[0]._id;
+    next();
+  });
+};
 
 var stdResponse = function(req, res, next) {
   var statusList = {
+    '-3': '页面不存在',
     '-2': '数据库查询失败',
     '-1': '数据库连接失败',
     '0': 'OK',
     '1': '参数不合法',
     '2': '用户名已经被注册',
     '3': '用户名密码错误',
+    '4': 'token校验失败',
   }
   res.stdShort = function(code) {
     var obj = {
@@ -79,12 +98,14 @@ var stdResponse = function(req, res, next) {
   next();
 }
 
-app.use(injectMongo);
 app.use(stdResponse);
+app.use(injectMongo);
+app.use('/api/users/i/jobs', checkAuth);
 
-app.use('/api', routes);
+app.use('/', routes);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
+app.use('/api/users/i/jobs', jobs);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -100,6 +121,8 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
+    if(err.status == 404)
+      return res.stdShort(-3);
     res.render('error', {
       message: err.message,
       error: err
@@ -111,6 +134,8 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
+  if(err.status == 404)
+    return res.stdShort(-3);
   res.render('error', {
     message: err.message,
     error: {}

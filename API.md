@@ -27,12 +27,14 @@ result: 标准响应格式的JSON对象
 ### 响应描述说明:
 ```
 status = {
-  '-2': '数据库查询失败',
-  '-1': '数据库连接失败',
-  '0': 'OK',
-  '1': '参数不合法',
-  '2': '用户名已经被注册',
-  '3': '用户名密码错误',
+    '-3': '页面不存在',
+    '-2': '数据库查询失败',
+    '-1': '数据库连接失败',
+    '0': 'OK',
+    '1': '参数不合法',
+    '2': '用户名已经被注册',
+    '3': '用户名密码错误',
+    '4': 'token校验失败',
 }
 ```
 响应描述和响应码一一对应，当code不为0时可直接将响应描述显示在屏幕  
@@ -52,7 +54,7 @@ param: null
 result:   
 {
   code: 0 | -1
-  result: 
+  data: 
     JSON Array 所有用户记录
 }
 ```
@@ -76,8 +78,7 @@ param:
 result:   
 {
   code: 0 | 1 | 2
-  result: JSON Array 
-    [所有用户记录]
+  data: null
 }
 ```
 
@@ -95,9 +96,30 @@ param:
 result:   
 {
   code: 0 | 1 | 3
-  result: JSON Object
+  data: JSON Object
     {
       token: 身份认证token
     }
+}
+```
+
+### 维修单相关
+---
+
+#### 新增维修单
+学生用户新增一项维修事项
+```
+url: users/i/jobs
+method: POST
+param:
+  token (身份认证,必填,通过登录认证接口获得)
+  pic (图片,选填,暂不支持)
+  aud (语音,选填,暂不支持)
+  position (地点,必填)
+  desc (描述,选填)
+result:
+{
+  code: 0 | 1 | 4
+  data: null
 }
 ```
