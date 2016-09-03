@@ -60,6 +60,7 @@ var checkAuth = function(req, res, next) {
 
 var stdResponse = function(req, res, next) {
   var statusList = {
+    '-4': '与容联服务器通讯失败',
     '-3': '页面不存在',
     '-2': '数据库查询失败',
     '-1': '数据库连接失败',
@@ -100,6 +101,7 @@ var stdResponse = function(req, res, next) {
 
 app.use(stdResponse);
 app.use(injectMongo);
+app.use('/api/auth/im', checkAuth);
 app.use('/api/users/i/jobs', checkAuth);
 
 app.use('/', routes);

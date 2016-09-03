@@ -26,4 +26,26 @@ router.post('/', function(req, res) {
 });
 
 
+router.post('/im', function(req, res) {  
+  req.db.users.find({_id: req.userId}).toArray(function(err, result) {
+    if(err)
+      return res.stdShort(-2);
+    var rongcloudSDK = require( 'rongcloud-sdk' );
+    rongcloudSDK.init( 'pgyu6atqyp9lu', 'RuXtYidsw21p' );
+    // console.log(typeof(''+result[0]._id)+'  '+typeof(result[0].nickname))
+    rongcloudSDK.user.getToken( ''+result[0]._id, result[0].nickname, 'http://121.250.222.124:3000/avatar.png', function( err, resultText ) {
+      if( err ) {
+        return res.stdShort(-4);
+      }
+      else {
+        var result = JSON.parse( resultText );
+        if( result.code === 200 ) {
+          return res.stdData(result);
+        }
+      }
+    });
+  });
+});
+
+
 module.exports = router;
