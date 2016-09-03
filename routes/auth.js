@@ -31,7 +31,7 @@ router.post('/im', function(req, res) {
     if(err)
       return res.stdShort(-2);
     var rongcloudSDK = require( 'rongcloud-sdk' );
-    rongcloudSDK.init( 'pgyu6atqyp9lu', 'RuXtYidsw21p' );
+    rongcloudSDK.init( '8w7jv4qb78a3y', 'vpg5GbuM4A0' );
     // console.log(typeof(''+result[0]._id)+'  '+typeof(result[0].nickname))
     rongcloudSDK.user.getToken( ''+result[0]._id, result[0].nickname, 'http://121.250.222.124:3000/avatar.png', function( err, resultText ) {
       if( err ) {
