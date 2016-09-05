@@ -27,6 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //middle ware
 var injectMongo = function(req, res, next) {
+  
+  // console.log(require('moment').format());
   var MongoClient = require('mongodb').MongoClient;
   var url = 'mongodb://localhost:27017/tinker';
   MongoClient.connect(url, function(err, db) {
@@ -76,7 +78,9 @@ var stdResponse = function(req, res, next) {
       status: statusList[code],
       data: null
     }
-    res.send(JSON.stringify(obj));
+    var json = JSON.stringify(obj);
+    console.log(json);
+    res.send(json);
   }
 
   res.std = function(code, status, data) {
@@ -85,7 +89,9 @@ var stdResponse = function(req, res, next) {
       status: status,
       data: data
     }
-    res.send(JSON.stringify(obj));
+    var json = JSON.stringify(obj);
+    console.log(json);
+    res.send(json);
   }
 
   res.stdData = function(data) {
@@ -94,7 +100,9 @@ var stdResponse = function(req, res, next) {
       status: 'OK',
       data: data
     }
-    res.send(JSON.stringify(obj));
+    var json = JSON.stringify(obj);
+    console.log(json);
+    res.send(json);
   }
   next();
 }

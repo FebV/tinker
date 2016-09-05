@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
 
 router.post('/', function(req, res) {
   var p = req.body;
-
+  console.log(p);
   var legal = vali.isAlpha(p.username)
               && p.password
               && p.school
