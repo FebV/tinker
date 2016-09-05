@@ -11,6 +11,27 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/:id/info', function(req, res, next) {
+  if(req.params.id == 'i')
+    return next();
+  var users = req.db.users;
+  var ObjectId = require('mongodb').ObjectID;
+  console.log(req.params.id);
+  users.find({_id: ObjectId(req.params.id)}).toArray(function(err, docs) {
+    var user = docs[0];
+    var obj = {
+      _id: user._id,
+      username: user.username,
+      school: user.school,
+      pic: user.pic,
+      nickname: user.nickname,
+      phone: user.phone,
+      type: user.type
+    }
+    res.stdData(obj);
+  });
+});
+
 router.post('/', function(req, res) {
   var p = req.body;
   console.log(p);
@@ -23,6 +44,16 @@ router.post('/', function(req, res) {
   if(!legal)
     return res.stdShort(1);
 
+  var obj = {
+      username: p.username,
+      password: p.password,
+      school: p.school,
+      pic: p.pic,
+      nickname: p.nickname,
+      phone: p.phone,
+      type: p.type
+    }
+
   var users = req.db.users;
   users.count({username: p.username}, function(err, result) {
     if(err != null)
@@ -32,7 +63,7 @@ router.post('/', function(req, res) {
       return res.stdShort(2)
 
 
-    users.insertOne(p, function(err, result) {
+    users.insertOne(obj, function(err, result) {
       if(!!err)
         return res.stdShort(-2);
 
@@ -42,6 +73,24 @@ router.post('/', function(req, res) {
   });
 });
 
-router.post('')
+router.get('/i/info', function(req, res){
+  var users = req.db.users;
+  users.find({_id: req.userId}).toArray(function(err, result) {
+    if(err)
+      return res.stdShort(-2);
+    var user = result[0];
+    var obj = {
+      _id: user._id,
+      username: user.username,
+      school: user.school,
+      pic: user.pic,
+      nickname: user.nickname,
+      phone: user.phone,
+      type: user.type
+    }
+    return res.stdData(obj);  
+  });
+});
+
 
 module.exports = router;

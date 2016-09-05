@@ -5,7 +5,7 @@ router.get('/', function(req, res) {
   // return res.stdShort(0);
   var jobs = req.db.jobs;
 
-  jobs.find().toArray(function(err, docs) {
+  jobs.find({_id: req.userId}).toArray(function(err, docs) {
     if(err)
       return res.stdShort(2);
     

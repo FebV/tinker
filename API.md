@@ -1,8 +1,17 @@
 # Tinker API文档
-2016.09.03 18:20  version: 0.0.3  
+2016.09.05 17:30  version: 0.0.4  
 *本文档使用Markdown格式*
 
-_本次更新说明 :_  
+
+_本次更新说明 :_
+_新增获得当前用户资料接口_
+_新增获得其他用户资料接口_
+_新增获得当前用户发布的维修单接口_
+_新增获得所有用户发布的维修单接口_
+_新增维修工接单接口_
+
+
+_0.03说明 :_  
 _新增了获得融云token的接口_
 
 _0.0.2更新说明 :_  
@@ -87,6 +96,50 @@ result:
 }
 ```
 
+#### 查询当前用户资料
+查询自己的资料
+```
+url: users/i/info  
+method: GET
+param:
+  token  
+result:   
+{
+  code: ...
+  data: JSON Object
+  {
+    _id
+    username
+    school
+    pic
+    nickname
+    phone
+    type(1为用户, 2为维修工)
+  }
+}
+```
+
+#### 查询其他用户资料
+查询其他用户的资料
+```
+url: users/:userId/info  
+method: GET
+result:   
+{
+  code: ...
+  data: JSON Object
+  {
+    _id
+    username
+    school
+    pic
+    nickname
+    phone
+    type(1为用户, 2为维修工)
+  }
+}
+```
+
 ### 认证相关
 ---
 
@@ -149,5 +202,71 @@ result:
 {
   code: 0 | 1 | 4
   data: null
+}
+```
+
+#### 查询自己的维修单
+用户查询自己的维修事项
+```
+url: users/i/jobs
+method: GET
+param:
+  token (身份认证,必填,通过登录认证接口获得)
+result:
+{
+  code: ...
+  data: JSON Array
+  [{
+    _id(维修单id)
+    pic(图片,暂不支持)
+    aud(语音,暂不支持)
+    position(地点)
+    time(发布时间,格式为UNIX时间戳)
+    state(当前状态,1为待接受,2为维修中,3为已维修)
+    desc(描述)
+    userId(发布者id)
+    tinkerId(维修者id,仅当state不为1时出现)
+  }]
+}
+```
+
+#### 查询所有的维修单
+查询所有已发布的维修事项
+```
+url: jobs
+method: GET
+param:
+  null
+result:
+{
+  code: ...
+  data: JSON Array
+  [{
+    _id(维修单id)
+    pic(图片,暂不支持)
+    aud(语音,暂不支持)
+    position(地点)
+    time(发布时间,格式为UNIX时间戳)
+    state(当前状态,1为待接受,2为维修中,3为已维修)
+    desc(描述)
+    userId(发布者id)
+    tinkerId(维修者id,仅当state不为1时出现)
+  }]
+}
+```
+
+#### 接受维修单
+维修工接受一个维修单
+```
+url: order
+method: POST
+param:
+  token
+  jobId: 维修单id
+result:
+{
+  code: ...
+  data: null
+
 }
 ```

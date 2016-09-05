@@ -10,6 +10,8 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
 var jobs = require('./routes/jobs');
+var market = require('./routes/market');
+var order = require('./routes/order');
 
 var app = express();
 
@@ -46,6 +48,7 @@ var injectMongo = function(req, res, next) {
 };
 
 var checkAuth = function(req, res, next) {
+  console.log('check');
   var token = req.query.token ? req.query.token : req.body.token;
   if(!token)
     return res.stdShort(1);
@@ -71,6 +74,9 @@ var stdResponse = function(req, res, next) {
     '2': '用户名已经被注册',
     '3': '用户名密码错误',
     '4': 'token校验失败',
+    '5': '身份不符',
+    '6': 'jobId不合法',
+    '7': 'jobId不存在',
   }
   res.stdShort = function(code) {
     var obj = {
@@ -110,11 +116,14 @@ var stdResponse = function(req, res, next) {
 app.use(stdResponse);
 app.use(injectMongo);
 app.use('/api/auth/im', checkAuth);
-app.use('/api/users/i/jobs', checkAuth);
+app.use('/api/users/i/', checkAuth);
+app.use('/api/order', checkAuth);
 
 app.use('/', routes);
 app.use('/api/users', users);
+app.use('/api/order', order);
 app.use('/api/auth', auth);
+app.use('/api/jobs', market);
 app.use('/api/users/i/jobs', jobs);
 
 // catch 404 and forward to error handler
