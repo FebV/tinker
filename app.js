@@ -5,6 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var formidable = require('formidable');
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -24,13 +26,19 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(multer({dest: '/public/uploads'}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+function isEmpty(obj) {
+  var t;  
+    for (t in obj)  
+        return !1;  
+    return !0;
+}
+
 //middle ware
 var injectMongo = function(req, res, next) {
-  
-  // console.log(require('moment').format());
   var MongoClient = require('mongodb').MongoClient;
   var url = 'mongodb://localhost:27017/tinker';
   MongoClient.connect(url, function(err, db) {
@@ -42,25 +50,38 @@ var injectMongo = function(req, res, next) {
     req.db = {};
     req.db.users = db.collection('users');
     req.db.jobs = db.collection('jobs');
+    // req.db.jobPics = db.collection('jobPics');
+    if(isEmpty(req.body) && req.method == 'POST') {
+      var form = new formidable.IncomingForm();
+      form.parse(req, function(err, fields, files) {
+        console.log(req.body);
+          console.log('inverse');
+          req.body = fields;
+          req.files = files;
+          console.log(req.body);
+          return next();
+        // console.log(require('moment').format());
+      });
+    }
     next();
     req.db.db = db;
   });
 };
 
 var checkAuth = function(req, res, next) {
-  console.log('check');
-  var token = req.query.token ? req.query.token : req.body.token;
-  if(!token)
-    return res.stdShort(1);
-  req.db.users.find({token: token}).toArray(function(err, docs) {
-    if(err)
-      return res.stdShort(-2);
-    if(docs.length < 1)
-      return res.stdShort(4);
-    // console.log(docs[0]._id)
-    req.userId = docs[0]._id;
-    next();
-  });
+    
+    var token = req.query.token ? req.query.token : req.body.token;
+    if(!token)
+      return res.stdShort(1);
+    req.db.users.find({token: token}).toArray(function(err, docs) {
+      if(err)
+        return res.stdShort(-2);
+      if(docs.length < 1)
+        return res.stdShort(4);
+      // console.log(docs[0]._id)
+      req.userId = docs[0]._id;
+      next();
+    });
 };
 
 var stdResponse = function(req, res, next) {

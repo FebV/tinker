@@ -1,13 +1,17 @@
 var express = require('express');
 var router = express.Router();
 var vali = require('validator');
+var fs = require('fs');
 
 
 /* GET users listing. */
 router.get('/', function(req, res) {
   var users = req.db.users;
-  users.find().toArray(function(err, docs) {
-    res.stdData(docs);
+  console.log('get users');
+  users.find({}).toArray(function(err, docs) {
+    if(err) 
+      return res.stdShort(-2);
+    return res.stdData(docs);
   });
 });
 
@@ -34,21 +38,29 @@ router.get('/:id/info', function(req, res, next) {
 
 router.post('/', function(req, res) {
   var p = req.body;
-  console.log(p);
-  var legal = vali.isAlpha(p.username)
+  console.log('in');
+  var legal = p.username
+              // && vali.isAlpha(p.username)
               && p.password
               && p.school
               && p.nickname
-              && vali.isNumeric(p.phone)
+              // && vali.isNumeric(p.phone)
               && (p.type == 1 || p.type == 2);
+  console.log(legal);
   if(!legal)
     return res.stdShort(1);
 
+  var pic = null;
+  if(req.files && req.files.pic) {
+    var unix = Date.now();
+    fs.rename(req.files.pic.path, 'public/uploads/pics/'+unix);
+    pic = 'uploads/pics/'+unix;
+  }
   var obj = {
       username: p.username,
       password: p.password,
       school: p.school,
-      pic: p.pic,
+      pic: pic,
       nickname: p.nickname,
       phone: p.phone,
       type: p.type

@@ -1,9 +1,15 @@
 # Tinker API文档
-2016.09.05 17:30  version: 0.0.4  
+2016.09.08 15:30  version: 0.0.5  
 *本文档使用Markdown格式*
 
 
 _本次更新说明 :_  
+_现已支持文件上传_  
+_包括用户头像，维修单图片，维修单语音描述_
+_通过相应获取资料的接口可获得图片/语音文件的url_
+### Notice:  服务器未保存文件格式，仅储存二进制文件，建议上传时统一格式。
+
+_0.0.4更新说明 :_  
 _新增获得当前用户资料接口_  
 _新增获得其他用户资料接口_  
 _新增获得当前用户发布的维修单接口_  
@@ -85,7 +91,7 @@ param:
   username (用户名,必填,必须是英文字母,唯一)
   password (密码,必填)
   school (学校,必填)
-  pic (头像，暂不支持)
+  pic (头像,选填)
   nickname (昵称,必填)
   phone (手机号,必填,必须是数字)
   type (身份,必填,仅可填1|2，1代表学生，2代表维修工)
@@ -111,7 +117,7 @@ result:
     _id
     username
     school
-    pic
+    pic(图片文件url)
     nickname
     phone
     type(1为用户, 2为维修工)
@@ -194,8 +200,8 @@ url: users/i/jobs
 method: POST
 param:
   token (身份认证,必填,通过登录认证接口获得)
-  pic (图片,选填,暂不支持)
-  aud (语音,选填,暂不支持)
+  pic (图片,选填,暂时只支持一张)
+  aud (语音,选填)
   position (地点,必填)
   desc (描述,选填)
 result:
@@ -218,8 +224,8 @@ result:
   data: JSON Array
   [{
     _id(维修单id)
-    pic(图片,暂不支持)
-    aud(语音,暂不支持)
+    pic(图片文件url)
+    aud(语音文件url)
     position(地点)
     time(发布时间,格式为UNIX时间戳)
     state(当前状态,1为待接受,2为维修中,3为已维修)
@@ -243,8 +249,8 @@ result:
   data: JSON Array
   [{
     _id(维修单id)
-    pic(图片,暂不支持)
-    aud(语音,暂不支持)
+    pic(图片文件url)
+    aud(语音文件url)
     position(地点)
     time(发布时间,格式为UNIX时间戳)
     state(当前状态,1为待接受,2为维修中,3为已维修)
