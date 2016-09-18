@@ -1,5 +1,5 @@
 # Tinker API文档
-2016.09.05 17:30  version: 0.0.4  
+2016.09.18 21:10  version: 0.0.4  
 *本文档使用Markdown格式*
 
 
@@ -20,7 +20,7 @@ _更新了新建用户接口的参数要求_
 _更新了响应描述说明_  
 ## 基础配置
 
-### baseUrl = [http://121.250.222.124:3000/api/](http://121.250.222.124:3000/) (会变动) 
+### baseUrl = [http://121.250.222.23:4000/api/](http://121.250.222.23:4000/) (会变动) 
 ### 接口响应规范:
 标准响应格式(JSON对象):
 ```
@@ -85,7 +85,7 @@ param:
   username (用户名,必填,必须是英文字母,唯一)
   password (密码,必填)
   school (学校,必填)
-  pic (头像，暂不支持)
+  pic (头像，base64方式编码)
   nickname (昵称,必填)
   phone (手机号,必填,必须是数字)
   type (身份,必填,仅可填1|2，1代表学生，2代表维修工)
@@ -111,7 +111,7 @@ result:
     _id
     username
     school
-    pic
+    pic(base64方式编码)
     nickname
     phone
     type(1为用户, 2为维修工)
@@ -132,7 +132,7 @@ result:
     _id
     username
     school
-    pic
+    pic(base64方式编码)
     nickname
     phone
     type(1为用户, 2为维修工)
@@ -194,8 +194,8 @@ url: users/i/jobs
 method: POST
 param:
   token (身份认证,必填,通过登录认证接口获得)
-  pic (图片,选填,暂不支持)
-  aud (语音,选填,暂不支持)
+  pic (图片,选填,base64方式编码)
+  aud (语音,选填,base64方式编码)
   position (地点,必填)
   desc (描述,选填)
 result:
