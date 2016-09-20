@@ -30,7 +30,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 //middle ware
 var injectMongo = function(req, res, next) {
   
-  // console.log(require('moment').format());
   var MongoClient = require('mongodb').MongoClient;
   var url = 'mongodb://localhost:27017/tinker';
   MongoClient.connect(url, function(err, db) {
@@ -48,7 +47,6 @@ var injectMongo = function(req, res, next) {
 };
 
 var checkAuth = function(req, res, next) {
-  console.log('check');
   var token = req.query.token ? req.query.token : req.body.token;
   if(!token)
     return res.stdShort(1);
@@ -85,7 +83,6 @@ var stdResponse = function(req, res, next) {
       data: null
     }
     var json = JSON.stringify(obj);
-    console.log(json);
     res.send(json);
   }
 
@@ -96,7 +93,6 @@ var stdResponse = function(req, res, next) {
       data: data
     }
     var json = JSON.stringify(obj);
-    console.log(json);
     res.send(json);
   }
 
@@ -107,7 +103,6 @@ var stdResponse = function(req, res, next) {
       data: data
     }
     var json = JSON.stringify(obj);
-    console.log(json);
     res.send(json);
   }
   next();

@@ -35,11 +35,11 @@ router.get('/:id/info', function(req, res, next) {
 router.post('/', function(req, res) {
   var p = req.body;
   console.log(p);
-  var legal = vali.isAlpha(p.username)
+  var legal = p.username
               && p.password
               && p.school
               && p.nickname
-              && vali.isNumeric(p.phone)
+              && p.phone
               && (p.type == 1 || p.type == 2);
   if(!legal)
     return res.stdShort(1);

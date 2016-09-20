@@ -9,14 +9,17 @@ router.get('/', function(req, res) {
     if(err)
       return res.stdShort(2);
     
+    for(var i of docs) {
+      i.aud = null;
+    }
     return res.stdData(docs)
   });
 });
 
 router.post('/', function(req, res) {
   var p = req.body;
-  var legal = p.position
-              && p.token;
+  var legal = p.position;
+
   var jobs = req.db.jobs;
   if(!legal)
     return res.stdShort(1);
@@ -24,17 +27,19 @@ router.post('/', function(req, res) {
     pic: p.pic ? p.pic : null,
     aud: p.aud ? p.aud : null,
     position: p.position,
+    title: p.title,
     time: Date.now(),
     state: 1,
     desc: p.desc ? p.desc : null,
     userId : req.userId
   };
-  jobs.insertOne(obj, function(err, docs) {
-    if(err)
-      return res.stdShort(-2);
 
-    return res.stdShort(0);
-  });
+    jobs.insertOne(obj, function(err, docs) {
+      if(err)
+        return res.stdShort(-2);
+
+      return res.stdShort(0);
+    });
 });
 
 module.exports = router;
