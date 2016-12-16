@@ -1,9 +1,9 @@
 # tinker
-tinker for soing
-for Qilu Software Contest
+tinker for soing  
+for Qilu Software Contest  
 
-using nodejs/express
-fully api without view
+using nodejs/express  
+fully api without view  
 
 ## build
 npm install
